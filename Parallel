@@ -1,0 +1,48 @@
+#include <iostream>
+#include <thread>
+
+int partition(int arr[], int low, int high) {
+    int pivot = arr[high];
+    int i = low - 1;
+    for (int j = low; j < high; ++j) {
+        if (arr[j] <= pivot) {
+            i++;
+            std::swap(arr[i], arr[j]);
+        }
+    }
+    std::swap(arr[i + 1], arr[high]);
+    return i + 1;
+}
+
+void quicksort(int arr[], int low, int high) {
+    if (low < high) {
+        int pivotIndex = partition(arr, low, high);
+
+        std::thread leftThread(quicksort, arr, low, pivotIndex - 1);
+        std::thread rightThread(quicksort, arr, pivotIndex + 1, high);
+
+        leftThread.join();
+        rightThread.join();
+    }
+}
+
+int main() {
+    int array[] = {3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5};
+    int arraySize = sizeof(array) / sizeof(array[0]);
+
+    std::cout << "Original array:";
+    for (int i = 0; i < arraySize; ++i) {
+        std::cout << " " << array[i];
+    }
+    std::cout << std::endl;
+
+    quicksort(array, 0, arraySize - 1);
+
+    std::cout << "Sorted array:";
+    for (int i = 0; i < arraySize; ++i) {
+        std::cout << " " << array[i];
+    }
+    std::cout << std::endl;
+
+    return 0;
+}
